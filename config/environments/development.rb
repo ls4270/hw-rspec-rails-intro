@@ -29,3 +29,5 @@ Rottenpotatoes::Application.configure do
   # Expands the lines which load the assets
   config.assets.debug = true
 end
+
+Rails.application.config.hosts << "rebelrival-copyritual-3000.codio.io"

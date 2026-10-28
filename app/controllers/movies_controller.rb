@@ -1,6 +1,43 @@
 class MoviesController < ApplicationController
   before_action :force_index_redirect, only: [:index]
 
+  def search_tmdb
+    @movies = []
+
+    if params[:search_terms].present?
+      @movies = Movie.find_in_tmdb(params[:search_terms])
+    elsif params.key?(:title)
+      if params[:title].blank?
+        flash.now[:danger] = 'Please fill in all required fields!'
+      else
+        @movies = Movie.find_in_tmdb(
+          title: params[:title],
+          release_year: params[:release_year],
+          language: params[:language]
+        )
+
+        if @movies.empty?
+          flash.now[:warning] = 'No movies found with given parameters!'
+        end
+      end
+    end
+  rescue Faraday::Error, JSON::ParserError
+    @movies = []
+    flash.now[:danger] = 'Unable to search TMDb right now.'
+  end
+
+  def add_movie
+    @movie = Movie.create!(
+      params.require(:movie).permit(
+        :title, :rating, :description, :release_date
+      )
+    )
+
+    flash[:success] =
+      "#{@movie.title} was successfully added to RottenPotatoes."
+    redirect_to search_tmdb_path
+  end
+
   def show
     id = params[:id] # retrieve movie ID from URI route
     @movie = Movie.find(id) # look up movie by unique ID

@@ -25,6 +25,14 @@ group :development, :test do
 end
 
 group :production do
-  gem 'pg', '~> 0.2'
+  gem 'pg', '~> 1.6'
   gem 'rails_12factor'
 end
+
+gem "faraday", "= 1.8.0"
+
+gem "rails-controller-testing", "~> 1.0", :group => :test
+
+gem "guard-rspec", "~> 4.7", :group => :test
+
+gem "webmock", "~> 3.34", :group => :test
